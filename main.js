@@ -1,5 +1,8 @@
+import './tailwind.css'
 import gsap from 'gsap'
 import * as THREE from 'three'
+
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import vertexShader from './shaders/vertex.glsl'
 import fragmentShader from './shaders/fragment.glsl'
 
@@ -25,6 +28,9 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight)
 renderer.setPixelRatio(window.devicePixelRatio)
 
+// To make globe rotate in any direction by click and dragging
+// const controls = new OrbitControls(camera, renderer.domElement);
+
 // create a sphere
 const sphere = new THREE.Mesh(
   new THREE.SphereGeometry(5, 50, 50),
@@ -49,9 +55,7 @@ const atmosphere = new THREE.Mesh(
     side: THREE.BackSide
   })
 )
-
 atmosphere.scale.set(1.1, 1.1, 1.1)
-
 scene.add(atmosphere)
 
 const group = new THREE.Group()
@@ -90,11 +94,14 @@ function animate() {
   requestAnimationFrame(animate)
   renderer.render(scene, camera)
   sphere.rotation.y += 0.002
-  gsap.to(group.rotation, {
-    x: -mouse.y * 0.3,
-    y: mouse.x * 0.5,
-    duration: 2
-  })
+
+  if (mouse.x) {
+    gsap.to(group.rotation, {
+      x: -mouse.y * 0.3,
+      y: mouse.x * 0.5,
+      duration: 2
+    })
+  }
 }
 animate()
 
